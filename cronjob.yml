@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: noip-duc
+  namespace: default
+spec:
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    metadata:
+      creationTimestamp: null
+    spec:
+      template:
+        metadata:
+          creationTimestamp: null
+        spec:
+          containers:
+          - envFrom:
+            - configMapRef:
+                name: noip-config
+            - secretRef:
+                name: noip-secret
+            image: galonsky/noip-duc:0.0.1
+            imagePullPolicy: IfNotPresent
+            name: noip-duc
+            resources: {}
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+          dnsPolicy: ClusterFirst
+          restartPolicy: Never
+          schedulerName: default-scheduler
+          securityContext: {}
+          terminationGracePeriodSeconds: 30
+  schedule: '35 * * * *'
+  startingDeadlineSeconds: 10
+  successfulJobsHistoryLimit: 3
+  suspend: false
+  timeZone: America/New_York
